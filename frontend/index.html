@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Portfolio Assistant</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <!-- Chat Button -->
+  <button class="chat-toggle" id="chatToggle">
+    💬
+  </button>
+
+  <!-- Chat Window -->
+  <div class="chat-window" id="chatWindow">
+
+    <!-- Header -->
+    <div class="chat-header">
+      <div class="header-info">
+        <div class="avatar">🤖</div>
+        <div>
+          <h3>Emily Wilson</h3>
+          <span class="status">● Online</span>
+        </div>
+      </div>
+      <button class="close-btn" id="closeChat">✕</button>
+    </div>
+
+    <!-- Messages Area -->
+    <div class="chat-messages" id="chatMessages">
+      <div class="message bot-message">
+        <div class="bubble">
+          Hi there! 👋 I'm Emily, Rachel's personal assistant.
+          Ask me anything about her skills, projects, or experience!
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="chat-input-area">
+      <input
+        type="text"
+        id="userInput"
+        placeholder="Ask me anything..."
+        autocomplete="off"
+      />
+      <button id="sendBtn">Send</button>
+    </div>
+
+  </div>
+
+  <script src="chat.js"></script>
+</body>
+</html>
