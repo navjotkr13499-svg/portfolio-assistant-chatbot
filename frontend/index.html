@@ -2,54 +2,45 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Portfolio Assistant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Navjot's Portfolio Assistant</title>
   <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 </head>
 <body>
-
-  <!-- Chat Button -->
-  <button class="chat-toggle" id="chatToggle">
-    💬
-  </button>
-
-  <!-- Chat Window -->
-  <div class="chat-window" id="chatWindow">
-
+  <div class="chat-container">
     <!-- Header -->
     <div class="chat-header">
-      <div class="header-info">
-        <div class="avatar">🤖</div>
-        <div>
-          <h3>Emily Wilson</h3>
-          <span class="status">● Online</span>
-        </div>
+      <div class="header-content">
+        <h1>🤖 Portfolio Assistant</h1>
+        <p>Ask me anything about Navjot's skills, projects, and experience</p>
       </div>
-      <button class="close-btn" id="closeChat">✕</button>
     </div>
 
-    <!-- Messages Area -->
+    <!-- Messages Container -->
     <div class="chat-messages" id="chatMessages">
       <div class="message bot-message">
-        <div class="bubble">
-          Hi there! 👋 I'm Emily, Rachel's personal assistant.
-          Ask me anything about her skills, projects, or experience!
-        </div>
+        <p>
+          👋 Hi! I'm Navjot's assistant. Ask me about her skills, projects,
+          experience, or how to get in touch!
+        </p>
       </div>
     </div>
 
     <!-- Input Area -->
     <div class="chat-input-area">
-      <input
-        type="text"
-        id="userInput"
-        placeholder="Ask me anything..."
-        autocomplete="off"
-      />
-      <button id="sendBtn">Send</button>
+      <form id="chatForm">
+        <input
+          type="text"
+          id="messageInput"
+          placeholder="Ask me something..."
+          autocomplete="off"
+        />
+        <button type="submit" id="sendBtn">
+          <span>Send</span>
+          <span class="send-icon">➜</span>
+        </button>
+      </form>
     </div>
-
   </div>
 
   <script src="chat.js"></script>

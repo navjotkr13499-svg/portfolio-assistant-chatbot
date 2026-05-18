@@ -1,102 +1,134 @@
-const chatToggle = document.getElementById('chatToggle');
-const chatWindow = document.getElementById('chatWindow');
-const closeChat = document.getElementById('closeChat');
-const chatMessages = document.getElementById('chatMessages');
-const userInput = document.getElementById('userInput');
-const sendBtn = document.getElementById('sendBtn');
+// Configuration
+const API_URL = "http://localhost:5000/api/chat";
+let sessionId = null;
 
-// ── Toggle Chat Window ──
-chatToggle.addEventListener('click', () => {
-  chatWindow.classList.toggle('active');
-  if (chatWindow.classList.contains('active')) {
-    userInput.focus();
+// DOM Elements
+const chatMessages = document.getElementById("chatMessages");
+const messageInput = document.getElementById("messageInput");
+const sendBtn = document.getElementById("sendBtn");
+const chatForm = document.getElementById("chatForm");
+
+// Event Listeners
+chatForm.addEventListener("submit", handleSendMessage);
+messageInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    handleSendMessage(e);
   }
 });
 
-closeChat.addEventListener('click', () => {
-  chatWindow.classList.remove('active');
-});
+// Handle Send Message
+async function handleSendMessage(e) {
+  e.preventDefault();
 
-// ── Add Message Bubble ──
-function addMessage(text, sender) {
-  const messageDiv = document.createElement('div');
-  messageDiv.classList.add('message', `${sender}-message`);
+  const message = messageInput.value.trim();
 
-  const bubble = document.createElement('div');
-  bubble.classList.add('bubble');
-  bubble.textContent = text;
+  // Validation
+  if (!message) {
+    alert("Please type a message!");
+    return;
+  }
 
-  messageDiv.appendChild(bubble);
+  // Disable input while sending
+  messageInput.disabled = true;
+  sendBtn.disabled = true;
+
+  // Display user message
+  displayMessage(message, "user");
+
+  // Clear input
+  messageInput.value = "";
+
+  // Show typing indicator
+  showTypingIndicator();
+
+  try {
+    // Send message to backend
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message: message,
+        sessionId: sessionId,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    // Store session ID for conversation continuity
+    if (data.sessionId) {
+      sessionId = data.sessionId;
+    }
+
+    // Remove typing indicator
+    removeTypingIndicator();
+
+    // Display bot response
+    displayMessage(data.reply, "bot");
+
+    // Auto-scroll to bottom
+    scrollToBottom();
+  } catch (error) {
+    console.error("Error:", error);
+    removeTypingIndicator();
+    displayMessage(
+      "Sorry, I encountered an error. Please try again in a moment.",
+      "bot"
+    );
+  } finally {
+    // Re-enable input
+    messageInput.disabled = false;
+    sendBtn.disabled = false;
+    messageInput.focus();
+  }
+}
+
+// Display Message in Chat
+function displayMessage(text, sender) {
+  const messageDiv = document.createElement("div");
+  messageDiv.className = `message ${sender}-message`;
+
+  const messageParagraph = document.createElement("p");
+  messageParagraph.textContent = text;
+
+  messageDiv.appendChild(messageParagraph);
   chatMessages.appendChild(messageDiv);
+
   scrollToBottom();
 }
 
-// ── Typing Indicator ──
-function showTyping() {
-  const typingDiv = document.createElement('div');
-  typingDiv.classList.add('message', 'bot-message', 'typing-indicator');
-  typingDiv.id = 'typingIndicator';
-
+// Show Typing Indicator
+function showTypingIndicator() {
+  const typingDiv = document.createElement("div");
+  typingDiv.className = "message bot-message";
   typingDiv.innerHTML = `
-    <div class="bubble">
-      <span class="dot"></span>
-      <span class="dot"></span>
-      <span class="dot"></span>
+    <div class="typing-indicator">
+      <span></span>
+      <span></span>
+      <span></span>
     </div>
   `;
+  typingDiv.id = "typingIndicator";
 
   chatMessages.appendChild(typingDiv);
   scrollToBottom();
 }
 
-function hideTyping() {
-  const typingDiv = document.getElementById('typingIndicator');
-  if (typingDiv) typingDiv.remove();
+// Remove Typing Indicator
+function removeTypingIndicator() {
+  const typingIndicator = document.getElementById("typingIndicator");
+  if (typingIndicator) {
+    typingIndicator.remove();
+  }
 }
 
-// ── Scroll to Bottom ──
+// Auto-scroll to Bottom
 function scrollToBottom() {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
-
-// ── Send Message ──
-async function sendMessage() {
-  const message = userInput.value.trim();
-  if (!message) return;
-
-  // Show user message
-  addMessage(message, 'user');
-  userInput.value = '';
-  sendBtn.disabled = true;
-
-  // Show typing indicator
-  showTyping();
-
-  try {
-   const response = await fetch('https://urban-goggles-wrwg74556wjg35g4g-3000.app.github.dev/chat', {
-
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message })
-    });
-
-    const data = await response.json();
-    hideTyping();
-    addMessage(data.reply, 'bot');
-
-  } catch (error) {
-    hideTyping();
-    addMessage('Oops! Something went wrong. Please try again. 😓', 'bot');
-    console.error('Error:', error);
-  }
-
-  sendBtn.disabled = false;
-  userInput.focus();
-}
-
-// ── Event Listeners ──
-sendBtn.addEventListener('click', sendMessage);
-
-userInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') sendMessage();
-});
