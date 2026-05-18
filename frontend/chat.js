@@ -1,5 +1,5 @@
 // Configuration
-const API_URL = "http://localhost:5000/api/chat";
+const API_URL = "https://navjotkr13499-svg-5000.app.github.dev/api/chat";
 let sessionId = null;
 
 // DOM Elements
